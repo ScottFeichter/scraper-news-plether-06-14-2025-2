@@ -1,0 +1,14 @@
+{
+  "name": "tether-news-scraper",
+  "version": "1.0.0",
+  "description": "Lambda function to scrape Tether.io news articles",
+  "main": "news-scraper.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "@aws-sdk/client-s3": "^3.450.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
