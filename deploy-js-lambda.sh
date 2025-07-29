@@ -4,8 +4,10 @@
 set -e
 
 LAMBDA_FUNCTION_NAME="plether-news-scraper"
-S3_BUCKET_NAME="${1:-your-existing-bucket}"
+S3_BUCKET_NAME="${1:-admiend-plether-06-14-2025-2-20250614022549-28a681cc}"
 AWS_REGION="${2:-us-east-1}"
+GITHUB_TOKEN="${3:-}"
+GITHUB_REPO="${4:-}"
 
 echo "🚀 Deploying JavaScript News Scraper Lambda..."
 echo "Function: $LAMBDA_FUNCTION_NAME"
@@ -38,7 +40,7 @@ else
         --zip-file fileb://lambda-deployment.zip \
         --timeout 300 \
         --memory-size 256 \
-        --environment Variables="{S3_BUCKET_NAME=$S3_BUCKET_NAME}" \
+        --environment Variables="{S3_BUCKET_NAME=$S3_BUCKET_NAME,GITHUB_TOKEN=$GITHUB_TOKEN,GITHUB_REPO=$GITHUB_REPO}" \
         --region $AWS_REGION
 fi
 

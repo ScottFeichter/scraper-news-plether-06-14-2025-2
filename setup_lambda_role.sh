@@ -5,7 +5,7 @@ set -e
 
 ROLE_NAME="lambda-execution-role"
 POLICY_NAME="lambda-s3-policy"
-S3_BUCKET_NAME="${1:-your-existing-bucket}"
+S3_BUCKET_NAME="${1:-admiend-plether-06-14-2025-2-20250614022549-28a681cc}"
 
 echo "🔐 Setting up IAM role for Lambda..."
 

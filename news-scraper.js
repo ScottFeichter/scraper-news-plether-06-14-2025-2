@@ -3,7 +3,10 @@ const cheerio = require('cheerio');
 const { S3Client, PutObjectCommand, CopyObjectCommand } = require('@aws-sdk/client-s3');
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
-const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'your-existing-bucket';
+const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'admiend-plether-06-14-2025-2-20250614022549-28a681cc';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_REPO = process.env.GITHUB_REPO; // format: 'username/repo-name'
+const SCRAPER_TOKEN = process.env.SCRAPER_TOKEN;
 
 // Inspect HTML structure for debugging
 function inspectHtmlStructure(html) {
@@ -31,22 +34,11 @@ function inspectHtmlStructure(html) {
 function detectSelectors(html) {
     const $ = cheerio.load(html);
     
-    // Try common article container patterns
-    const articlePatterns = ['article', '.post', '.news-item', '.article', '.entry'];
-    let articleSelector = 'article';
-    
-    for (const pattern of articlePatterns) {
-        if ($(pattern).length > 0) {
-            articleSelector = pattern;
-            break;
-        }
-    }
-    
     return {
-        article: articleSelector,
-        title: 'h1, h2, h3',
-        image: 'img',
-        content: 'p'
+        article: '.article-item',
+        title: '.article-title',
+        image: '.img-article',
+        content: '.article-preview p'
     };
 }
 
@@ -63,6 +55,101 @@ async function backupCurrentData() {
         console.log('Current data backed up successfully');
     } catch (error) {
         console.log('No existing data to backup (first run)');
+    }
+}
+
+// Commit files to GitHub repository
+async function commitToGitHub(articles) {
+    if (!GITHUB_TOKEN || !GITHUB_REPO) {
+        console.log('GitHub integration not configured - skipping repo update');
+        return;
+    }
+
+    try {
+        const timestamp = new Date().toISOString().split('T')[0];
+        const articlesJson = JSON.stringify(articles, null, 2);
+        
+        // Get current file SHA if it exists
+        let sha = null;
+        try {
+            const existingFile = await axios.get(
+                `https://api.github.com/repos/${GITHUB_REPO}/contents/data/latest-articles.json`,
+                { headers: { Authorization: `token ${GITHUB_TOKEN}` } }
+            );
+            sha = existingFile.data.sha;
+        } catch (error) {
+            console.log('File does not exist yet, creating new file');
+        }
+
+        // Commit latest articles
+        const commitData = {
+            message: `Update news articles - ${timestamp}`,
+            content: Buffer.from(articlesJson).toString('base64'),
+            ...(sha && { sha })
+        };
+
+        await axios.put(
+            `https://api.github.com/repos/${GITHUB_REPO}/contents/data/latest-articles.json`,
+            commitData,
+            { headers: { Authorization: `token ${GITHUB_TOKEN}` } }
+        );
+
+        // Also create timestamped file
+        await axios.put(
+            `https://api.github.com/repos/${GITHUB_REPO}/contents/data/articles-${timestamp}.json`,
+            {
+                message: `Archive news articles - ${timestamp}`,
+                content: Buffer.from(articlesJson).toString('base64')
+            },
+            { headers: { Authorization: `token ${GITHUB_TOKEN}` } }
+        );
+
+        console.log('Successfully committed to GitHub repository');
+    } catch (error) {
+        console.error('Failed to commit to GitHub:', error.message);
+    }
+}
+
+// Commit to scraper microservice repo
+async function commitToScraperRepo(articles) {
+    if (!SCRAPER_TOKEN) {
+        console.log('Scraper token not configured - skipping scraper repo update');
+        return;
+    }
+
+    try {
+        const timestamp = new Date().toISOString().split('T')[0];
+        const articlesJson = JSON.stringify(articles, null, 2);
+        const scraperRepo = 'ScottFeichter/scraper-news-plether-06-14-2025-2';
+        
+        // Get current file SHA if it exists
+        let sha = null;
+        try {
+            const existingFile = await axios.get(
+                `https://api.github.com/repos/${scraperRepo}/contents/latest-articles.json`,
+                { headers: { Authorization: `token ${SCRAPER_TOKEN}` } }
+            );
+            sha = existingFile.data.sha;
+        } catch (error) {
+            console.log('Scraper repo file does not exist yet, creating new file');
+        }
+
+        // Commit latest articles to scraper repo
+        const commitData = {
+            message: `Update scraped articles - ${timestamp}`,
+            content: Buffer.from(articlesJson).toString('base64'),
+            ...(sha && { sha })
+        };
+
+        await axios.put(
+            `https://api.github.com/repos/${scraperRepo}/contents/latest-articles.json`,
+            commitData,
+            { headers: { Authorization: `token ${SCRAPER_TOKEN}` } }
+        );
+
+        console.log('Successfully committed to scraper microservice repository');
+    } catch (error) {
+        console.error('Failed to commit to scraper repo:', error.message);
     }
 }
 
@@ -97,7 +184,7 @@ async function scrapeNews() {
             const title = $element.find(selectors.title).first().text().trim();
             const imageUrl = $element.find(selectors.image).first().attr('src') || '';
             const content = $element.find(selectors.content).first().text().trim();
-            const url = $element.find('a').first().attr('href') || '';
+            const url = $element.find('.article-more').first().attr('href') || '';
             
             if (title) {
                 articles.push({
@@ -129,6 +216,10 @@ async function scrapeNews() {
         
         await s3Client.send(putCommand);
         console.log('Articles stored in S3 at tether_news_scraper/latest-articles.json');
+        
+        // Commit to both GitHub repositories
+        await commitToGitHub(articles);
+        await commitToScraperRepo(articles);
         
         return {
             success: true,

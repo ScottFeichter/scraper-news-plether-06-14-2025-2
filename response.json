@@ -1,1 +1,1 @@
-{"statusCode":500,"body":"{\"message\":\"News scraping failed\",\"error\":\"No articles found - keeping existing data\",\"requestId\":\"cb1e527b-ff2b-46ae-b8d7-d52bb4c1b275\",\"timestamp\":\"2025-07-28T23:19:03.656Z\"}"}
+{"statusCode":200,"body":"{\"message\":\"News scraping completed successfully\",\"requestId\":\"16e28797-0b33-4b8a-94ed-ce04487b4ef4\",\"articlesCount\":2,\"timestamp\":\"2025-07-29T03:46:49.406Z\"}"}
