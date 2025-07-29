@@ -176,10 +176,19 @@ your-bucket/
 
 ## Frontend Integration
 
-### Direct S3 Access
-Frontend fetches articles directly from S3:
+### Multiple Data Sources
+**Option 1: Direct S3 Access**
 ```javascript
-fetch('https://your-bucket.s3.amazonaws.com/tether_news_scraper/latest-articles.json')
+fetch('https://admiend-plether-06-14-2025-2-20250614022549-28a681cc.s3.amazonaws.com/tether_news_scraper/latest-articles.json')
+  .then(response => response.json())
+  .then(articles => {
+    // Display latest 2 Tether news articles
+  });
+```
+
+**Option 2: GitHub Raw Access**
+```javascript
+fetch('https://raw.githubusercontent.com/ScottFeichter/admiend-plether-06-14-2025-2/main/data/latest-articles.json')
   .then(response => response.json())
   .then(articles => {
     // Display latest 2 Tether news articles
@@ -193,10 +202,27 @@ fetch('https://your-bucket.s3.amazonaws.com/tether_news_scraper/latest-articles.
     "title": "Article Title",
     "content": "Article excerpt...",
     "image_url": "https://...",
-    "date": "2025-01-14",
+    "date": "2025-07-29",
     "url": "https://tether.io/news/article-url"
   }
 ]
+```
+
+## GitHub Integration
+
+### Dual Repository Setup
+- **Main Project**: `ScottFeichter/admiend-plether-06-14-2025-2`
+  - Token: Fine-grained, Contents write permission
+  - Files: `data/latest-articles.json`, `data/articles-YYYY-MM-DD.json`
+- **Scraper Microservice**: `ScottFeichter/scraper-news-plether-06-14-2025-2`
+  - Token: Fine-grained, Contents write permission  
+  - Files: `latest-articles.json`
+
+### Environment Variables
+```bash
+GITHUB_TOKEN=github_pat_xxx  # Main project repo token
+SCRAPER_TOKEN=github_pat_yyy # Scraper repo token
+GITHUB_REPO=ScottFeichter/admiend-plether-06-14-2025-2
 ```
 
 ## Maintenance
@@ -251,23 +277,28 @@ aws logs tail /aws/lambda/plether-news-scraper --follow
 
 ## Current Status
 
-### ✅ Successfully Deployed
+### ✅ Fully Operational
 - **Lambda Function**: `plether-news-scraper` 
 - **Runtime**: Node.js 18.x
-- **Schedule**: Daily at 12:00 AM UTC
+- **Schedule**: Daily at 12:00 AM UTC (4:00 PM PST / 5:00 PM PDT)
 - **S3 Output**: `s3://admiend-plether-06-14-2025-2-20250614022549-28a681cc/tether_news_scraper/latest-articles.json`
 - **EventBridge Rule**: `plether-news-scraper-daily`
+- **GitHub Integration**: Commits to both repositories automatically
 
-### ⚠️ Needs CSS Selectors
-- Function runs successfully but finds no articles
-- Requires inspection of tether.io/news HTML structure
-- Need to update selectors in `detectSelectors()` function
+### ✅ Automated Workflow
+**Every day at midnight UTC:**
+1. Scrapes 2 latest articles from tether.io/news
+2. Stores in S3 bucket with backup
+3. Commits to main project repo: `ScottFeichter/admiend-plether-06-14-2025-2`
+   - `data/latest-articles.json` - Current articles
+   - `data/articles-YYYY-MM-DD.json` - Timestamped archive
+4. Commits to scraper repo: `ScottFeichter/scraper-news-plether-06-14-2025-2`
+   - `latest-articles.json` - Current articles
 
-### Next Steps
-1. Inspect tether.io/news HTML structure
-2. Identify correct CSS selectors for articles
-3. Update `news-scraper.js` with proper selectors
-4. Redeploy with `./deploy-js-lambda.sh`
+### 🔄 Local Sync
+```bash
+git pull origin main  # Updates latest-articles.json automatically
+```
 
 ## Line-by-Line Analysis
 
@@ -331,16 +362,20 @@ aws logs tail /aws/lambda/plether-news-scraper --follow
 
 ## Deployment Status
 - **Architecture**: Serverless microservice (AWS Lambda)
-- **Scheduling**: EventBridge rule for daily 12am execution
+- **Scheduling**: EventBridge rule for daily 12am UTC execution
 - **Container Independence**: Zero interaction with EC2 containers
 - **Cost**: Under $1 annually
-- **Data Access**: Frontend reads directly from S3
+- **Data Access**: Frontend reads directly from S3 + GitHub repos
 - **Error Handling**: Automatic fallback to previous data on failure
+- **GitHub Integration**: Dual repository commits with separate tokens
 
 ## Implementation Checklist
-- [ ] Create Lambda deployment script
-- [ ] Set up EventBridge scheduling rule
-- [ ] Configure S3 bucket structure
-- [ ] Update S3 bucket name from placeholder
-- [ ] Test Lambda function independently
-- [ ] Verify frontend S3 access to news data
+- [x] Create Lambda deployment script
+- [x] Set up EventBridge scheduling rule
+- [x] Configure S3 bucket structure
+- [x] Update S3 bucket name from placeholder
+- [x] Test Lambda function independently
+- [x] Verify frontend S3 access to news data
+- [x] Configure GitHub API integration
+- [x] Set up dual repository commits
+- [x] Test automated workflow end-to-end
