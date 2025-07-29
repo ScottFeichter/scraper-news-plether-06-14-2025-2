@@ -7,6 +7,7 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'admiend-plether-06-14-2025-2-
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = process.env.GITHUB_REPO; // format: 'username/repo-name'
 const SCRAPER_TOKEN = process.env.SCRAPER_TOKEN;
+const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1399843121306669178/ZIkScwU9Jx06lT8-6R8Ylkf1kBSY1Z7Q3gXofmVWR38baot1uRrB3_7WDo_4dU-jh6Me';
 
 // Inspect HTML structure for debugging
 function inspectHtmlStructure(html) {
@@ -153,6 +154,36 @@ async function commitToScraperRepo(articles) {
     }
 }
 
+// Send Discord notification
+async function sendDiscordNotification(success, articlesCount, error = null) {
+    try {
+        const timestamp = new Date().toISOString();
+        const color = success ? 0x00ff00 : 0xff0000; // Green for success, red for error
+        
+        const embed = {
+            title: success ? '✅ News Scraper Success' : '❌ News Scraper Failed',
+            color: color,
+            fields: [
+                { name: 'Status', value: success ? 'Completed successfully' : 'Failed', inline: true },
+                { name: 'Articles', value: articlesCount.toString(), inline: true },
+                { name: 'Timestamp', value: timestamp, inline: false }
+            ]
+        };
+        
+        if (error) {
+            embed.fields.push({ name: 'Error', value: error, inline: false });
+        }
+        
+        await axios.post(DISCORD_WEBHOOK, {
+            embeds: [embed]
+        });
+        
+        console.log('Discord notification sent');
+    } catch (error) {
+        console.error('Failed to send Discord notification:', error.message);
+    }
+}
+
 // Main scraping function
 async function scrapeNews() {
     try {
@@ -183,15 +214,25 @@ async function scrapeNews() {
             
             const title = $element.find(selectors.title).first().text().trim();
             const imageUrl = $element.find(selectors.image).first().attr('src') || '';
-            const content = $element.find(selectors.content).first().text().trim();
+            const rawContent = $element.find(selectors.content).first().text().trim();
             const url = $element.find('.article-more').first().attr('href') || '';
+            
+            // Extract date from beginning of content (e.g., "24 July 2025 —")
+            const dateMatch = rawContent.match(/^([^—–-]+[—–-])\s*(.*)$/);
+            let articleDate = '';
+            let content = rawContent;
+            
+            if (dateMatch) {
+                articleDate = dateMatch[1].trim(); // "24 July 2025 —"
+                content = dateMatch[2].trim(); // Rest of content without date
+            }
             
             if (title) {
                 articles.push({
                     title,
                     content,
                     image_url: imageUrl,
-                    date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+                    date: articleDate,
                     url
                 });
             }
@@ -221,6 +262,9 @@ async function scrapeNews() {
         await commitToGitHub(articles);
         await commitToScraperRepo(articles);
         
+        // Send Discord notification
+        await sendDiscordNotification(true, articles.length);
+        
         return {
             success: true,
             articlesCount: articles.length,
@@ -229,6 +273,10 @@ async function scrapeNews() {
         
     } catch (error) {
         console.error('Scraping failed:', error.message);
+        
+        // Send Discord notification for scraping failure
+        await sendDiscordNotification(false, 0, error.message);
+        
         throw error;
     }
 }
@@ -252,6 +300,9 @@ exports.handler = async (event, context) => {
         
     } catch (error) {
         console.error('Lambda execution failed:', error);
+        
+        // Send Discord notification for failure
+        await sendDiscordNotification(false, 0, error.message);
         
         return {
             statusCode: 500,
