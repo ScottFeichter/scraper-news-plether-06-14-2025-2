@@ -1,6 +1,8 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { S3Client, PutObjectCommand, CopyObjectCommand } = require('@aws-sdk/client-s3');
+const { logResponse } = require('./logger');
+const { cleanupOldMessages } = require('./discord-cleanup');
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
 const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'admiend-plether-06-14-2025-2-20250614022549-28a681cc';
@@ -265,14 +267,22 @@ async function scrapeNews() {
         // Send Discord notification
         await sendDiscordNotification(true, articles.length);
         
-        return {
+        const result = {
             success: true,
             articlesCount: articles.length,
             articles
         };
         
+        // Log successful response
+        logResponse(true, result);
+        
+        return result;
+        
     } catch (error) {
         console.error('Scraping failed:', error.message);
+        
+        // Log failed response
+        logResponse(false, null, error);
         
         // Send Discord notification for scraping failure
         await sendDiscordNotification(false, 0, error.message);
@@ -284,6 +294,9 @@ async function scrapeNews() {
 // Lambda handler
 exports.handler = async (event, context) => {
     console.log('Starting Tether news scraper...');
+    
+    // Run Discord cleanup before scraping
+    await cleanupOldMessages();
     
     try {
         const result = await scrapeNews();
@@ -300,6 +313,9 @@ exports.handler = async (event, context) => {
         
     } catch (error) {
         console.error('Lambda execution failed:', error);
+        
+        // Log failed response
+        logResponse(false, null, error);
         
         // Send Discord notification for failure
         await sendDiscordNotification(false, 0, error.message);
