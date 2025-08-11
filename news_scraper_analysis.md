@@ -7,9 +7,12 @@ Complete serverless microservice for scraping Tether.io news articles, deployed 
 ```
 scripts/news_lambda/
 ├── news-scraper.js                    # JavaScript Lambda function
+├── logger.js                          # Response logging module
+├── discord-cleanup.js                 # Discord message cleanup module
 ├── package.json                       # Node.js dependencies
 ├── deploy-js-lambda.sh                # Deployment automation
 ├── setup_lambda_role.sh               # IAM role setup
+├── scraper.log                        # Response log file (generated)
 └── news_scraper_analysis.md           # This documentation
 ```
 
@@ -53,6 +56,8 @@ EventBridge (cron) → Lambda → Tether.io → S3 → Frontend
 - **Error handling** - falls back to existing data on failures
 - **S3 backup system** - preserves previous articles
 - **Comprehensive logging** - detailed debug output
+- **Response logging** - all operations logged with timestamps to scraper.log
+- **Discord cleanup** - automatically deletes bot messages older than 15 days
 - **Native AWS SDK** - uses @aws-sdk/client-s3
 
 **Data Structure**:
@@ -70,6 +75,7 @@ const article = {
 - `axios` - HTTP requests
 - `cheerio` - HTML parsing (jQuery-like)
 - `@aws-sdk/client-s3` - S3 operations
+- `discord.js` - Discord bot integration for message cleanup
 
 ### 2. package.json - Node.js Configuration
 **Purpose**: Defines dependencies and Node.js runtime requirements
@@ -79,7 +85,8 @@ const article = {
 {
   "axios": "^1.6.0",           // HTTP client
   "cheerio": "^1.0.0-rc.12",   // HTML parsing
-  "@aws-sdk/client-s3": "^3.450.0"  // AWS S3 SDK
+  "@aws-sdk/client-s3": "^3.450.0",  // AWS S3 SDK
+  "discord.js": "^14.14.1"     // Discord bot integration
 }
 ```
 
@@ -105,7 +112,45 @@ const article = {
 - Timeout: 300 seconds (5 minutes)
 - Environment: `S3_BUCKET_NAME`
 
-### 4. setup_lambda_role.sh - IAM Configuration
+### 4. logger.js - Response Logging Module
+**Purpose**: Logs all scraper operations with timestamps for monitoring and debugging
+
+**Key Functions**:
+- `logResponse(success, data, error)` - Logs operation results to scraper.log
+
+**Features**:
+- **Timestamped entries** - ISO format timestamps for all operations
+- **Success/failure tracking** - Separate handling for successful and failed operations
+- **JSON format** - One JSON object per line for easy parsing
+- **Article data logging** - Includes article count and content on success
+- **Error logging** - Captures error messages and stack traces
+
+**Log Format**:
+```json
+{"timestamp":"2025-01-15T12:00:00.000Z","success":true,"articlesCount":2,"articles":[...]}
+{"timestamp":"2025-01-16T12:00:00.000Z","success":false,"error":"Network timeout"}
+```
+
+### 5. discord-cleanup.js - Message Cleanup Module
+**Purpose**: Automatically deletes Discord bot messages older than 15 days
+
+**Key Functions**:
+- `cleanupOldMessages()` - Main cleanup function for old bot messages
+
+**Features**:
+- **15-day retention** - Configurable DELETE_AFTER_DAYS constant
+- **Bot message filtering** - Only deletes messages from bots
+- **Permission checking** - Verifies ManageMessages permission before deletion
+- **Rate limiting** - Built-in delays to respect Discord API limits
+- **Bulk deletion** - Uses efficient bulk delete for messages < 14 days old
+- **Individual deletion** - Falls back to individual deletion for older messages
+- **Channel targeting** - Can target specific channel or auto-detect news channels
+
+**Environment Variables**:
+- `DISCORD_BOT_TOKEN` - Required Discord bot token
+- `DISCORD_CHANNEL_ID` - Optional specific channel ID to clean
+
+### 6. setup_lambda_role.sh - IAM Configuration
 **Purpose**: Creates necessary IAM roles and policies for Lambda execution
 
 **IAM Components**:
@@ -223,6 +268,8 @@ fetch('https://raw.githubusercontent.com/ScottFeichter/admiend-plether-06-14-202
 GITHUB_TOKEN=github_pat_xxx  # Main project repo token
 SCRAPER_TOKEN=github_pat_yyy # Scraper repo token
 GITHUB_REPO=ScottFeichter/admiend-plether-06-14-2025-2
+DISCORD_BOT_TOKEN=your_bot_token  # Discord bot for message cleanup
+DISCORD_CHANNEL_ID=channel_id     # Optional: specific channel to clean
 ```
 
 ## Maintenance
@@ -287,13 +334,17 @@ aws logs tail /aws/lambda/plether-news-scraper --follow
 
 ### ✅ Automated Workflow
 **Every day at midnight UTC:**
-1. Scrapes 2 latest articles from tether.io/news
-2. Stores in S3 bucket with backup
-3. Commits to main project repo: `ScottFeichter/admiend-plether-06-14-2025-2`
-   - `data/latest-articles.json` - Current articles
-   - `data/articles-YYYY-MM-DD.json` - Timestamped archive
-4. Commits to scraper repo: `ScottFeichter/scraper-news-plether-06-14-2025-2`
-   - `latest-articles.json` - Current articles
+1. **Discord Cleanup**: Deletes bot messages older than 15 days
+2. **Scraping**: Scrapes 2 latest articles from tether.io/news
+3. **Logging**: Records operation result with timestamp to scraper.log
+4. **Storage**: Stores in S3 bucket with backup
+5. **GitHub Commits**: 
+   - Main project repo: `ScottFeichter/admiend-plether-06-14-2025-2`
+     - `data/latest-articles.json` - Current articles
+     - `data/articles-YYYY-MM-DD.json` - Timestamped archive
+   - Scraper repo: `ScottFeichter/scraper-news-plether-06-14-2025-2`
+     - `latest-articles.json` - Current articles
+6. **Discord Notification**: Sends status update to webhook
 
 ### 🔄 Local Sync
 ```bash
@@ -378,4 +429,6 @@ git pull origin main  # Updates latest-articles.json automatically
 - [x] Verify frontend S3 access to news data
 - [x] Configure GitHub API integration
 - [x] Set up dual repository commits
+- [x] Add response logging system
+- [x] Add Discord message cleanup functionality
 - [x] Test automated workflow end-to-end
