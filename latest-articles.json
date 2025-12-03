@@ -1,16 +1,16 @@
 [
   {
+    "title": "Tether Data Introduces QVAC Fabric LLM, the Edge-First LLM Inference Runtime and Generalized LLM LoRA Fine-Tuning Framework for Modern AI Models on Heterogeneous GPUs, Smartphones, Laptops, and Servers",
+    "content": "Tether Data today announced the launch of QVAC Fabric LLM, a new comprehensive LLM inference runtime and fine-tuning framework that makes it possible to execute, train and personalize large language models directly on everyday hardware, including consumer GPUs, laptops, and even smartphones. What once required high-end cloud servers or specialized NVIDIA […]",
+    "image_url": "https://tether.io/wp-content/uploads/2025/12/QVAC-template-Blog-Post-1024x448.png",
+    "date": "2 December, 2025 –",
+    "url": "https://tether.io/news/tether-data-introduces-qvac-fabric-llm-the-edge-first-llm-inference-runtime-and-generalized-llm-lora-fine-tuning-framework-for-modern-ai-models-on-heterogeneous-gpus-smartphones-laptops-and-server/ "
+  },
+  {
     "title": "Tether Provides Closing Update on EUR₮ Wind-Down as Part of its Community-Driven Product Strategy",
     "content": "Tether, the largest company in the digital asset ecosystem, today issued a final update regarding the previously announced wind-down of EUR₮. As part of the conclusion of this process, Tether will cease EUR₮ redemptions across all supported blockchains on November 27, 2025. Tether […]",
     "image_url": "https://tether.io/wp-content/uploads/2024/06/image-281-1024x576.png",
     "date": "EUR₮ Redemptions to Cease on November 27, 2025 26 November 2025 –",
     "url": "https://tether.io/news/tether-provides-closing-update-on-eurt-wind-down-as-part-of-its-community-driven-product-strategy/ "
-  },
-  {
-    "title": "Tether Expands Real-World Asset Compliance Infrastructure Through Agreement Between Hadron by Tether and Crystal Intelligence",
-    "content": "Tether Hadron, S.A. de C.V., today announced that its asset tokenization platform, Hadron by Tether, has entered into an agreement with Crystal Intelligence to strengthen blockchain compliance and analytics capabilities for tokenized real-world assets (RWAs) worldwide. The collaboration enhances the compliance, transparency, and security framework for institutions issuing and managing tokenized […]",
-    "image_url": "https://tether.io/wp-content/uploads/2025/11/Hadron-x-Crystal-Intelligence-1024x448.png",
-    "date": "25 November 2025 –",
-    "url": "https://tether.io/news/tether-expands-real-world-asset-compliance-infrastructure-through-agreement-between-hadron-by-tether-and-crystal-intelligence/ "
   }
 ]
