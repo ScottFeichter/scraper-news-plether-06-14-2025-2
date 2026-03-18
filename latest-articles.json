@@ -1,16 +1,16 @@
 [
   {
+    "title": "Tether’s QVAC Launches World’s First Cross-Platform BitNet LoRA Framework to Enable Billion-Parameter AI Training and Inference on Consumer GPUs and Smartphones",
+    "content": "Tether today announced a breakthrough in AI model training with the launch of the world’s first cross-platform LoRA fine-tuning framework for Microsoft’s BitNet models (1-bit LLMs). This new capability, part of QVAC Fabric, dramatically reduces memory and compute requirements, enabling billion-parameter language models to be fine-tuned on everyday hardware, including laptops, […]",
+    "image_url": "https://tether.io/wp-content/uploads/2026/03/bitnet-1024x448.png",
+    "date": "17 March, 2026 –",
+    "url": "https://tether.io/news/tethers-qvac-launches-worlds-first-cross-platform-bitnet-lora-framework-to-enable-billion-parameter-ai-training-and-inference-on-consumer-gpus-and-smartphones/ "
+  },
+  {
     "title": "Tether Names Zachary Lyons as CIO; Richard Heathcote Transitions to Advisory Role After Guiding Investment Expansion",
     "content": "to-day responsibilities to focus on personal and family priorities. Richard has been one of the driving forces behind […]",
     "image_url": "https://tether.io/wp-content/uploads/2024/06/image-281-1024x576.png",
     "date": "Tether today announced a transition within its investment leadership. Chief Investment Officer Richard Heathcote, who has played a central role in shaping Tether’s investment strategy during a period of extraordinary growth, will be stepping back from his day-",
     "url": "https://tether.io/news/tether-names-zachary-lyons-as-cio-richard-heathcote-transitions-to-advisory-role-after-guiding-investment-expansion/ "
-  },
-  {
-    "title": "Tether Announces Strategic Investment in Ark Labs, Reintroducing Stablecoins to Programmable Bitcoin Infrastructure",
-    "content": "Tether Investments today announced a strategic investment in Ark Labs, the team behind Arkade, the programmable Bitcoin infrastructure, to expand global stablecoin access on the largest and most liquid network. This investment was part of a $5.2 million funding round, reinforcing Tether’s integral role and ongoing expansion into the Bitcoin ecosystem.  […]",
-    "image_url": "https://tether.io/wp-content/uploads/2026/03/Ark-Labs-1024x448.png",
-    "date": "12 March 2026 –",
-    "url": "https://tether.io/news/tether-announces-strategic-investment-in-ark-labs-reintroducing-stablecoins-to-programmable-bitcoin-infrastructure/ "
   }
 ]
