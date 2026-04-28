@@ -1,16 +1,16 @@
 [
   {
+    "title": "Tether Launches MDK, an Open Infrastructure Layer for Bitcoin Mining",
+    "content": "Tether, the largest company in the digital asset industry, today launched Mining Development Kit (MDK), an open-source, full-stack development framework that gives Bitcoin mining operators and developers unified control over their entire infrastructure stack.  With its open modular architecture and agnostic interfaces, MDK pairs a JavaScript backend SDK with a React […]",
+    "image_url": "https://tether.io/wp-content/uploads/2026/04/Tether-MDK-1024x448.webp",
+    "date": "27 April 2026 –",
+    "url": "https://tether.io/news/tether-launches-mdk-an-open-infrastructure-layer-for-bitcoin-mining/ "
+  },
+  {
     "title": "Tether Supports Freeze of More Than $344 Million in USD₮ in Coordination with OFAC and U.S. Law Enforcement",
     "content": "Tether announced today that it has supported the U.S. Government in freezing $344 million USD₮ across two addresses. The freeze was executed after the addresses were identified, preventing further movement of funds. The freeze follows information shared with Tether by several U.S. authorities about activity tied to unlawful conduct. When wallets […]",
     "image_url": "https://tether.io/wp-content/uploads/2024/06/image-281-1024x576.png",
     "date": "23 April 2026 –",
     "url": "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/ "
-  },
-  {
-    "title": "Tether Leads Support to the $150M Drift Recovery Plan, Stabilizes Relaunch as Drift Plans to Expand USD₮ Usage on Solana",
-    "content": "Tether, the largest company in the digital asset ecosystem, announced today a strategic collaboration with Drift Protocol and partners to support user recovery and relaunch the Drift platform following its April 1 exploit, which resulted in approximately $285 million in user losses. The collaboration establishes a structured recovery plan backed by […]",
-    "image_url": "https://tether.io/wp-content/uploads/2026/04/RGB-1-1024x448.png",
-    "date": "16 April 2026 –",
-    "url": "https://tether.io/news/tether-leads-support-to-the-150m-drift-recovery-plan-stabilizes-relaunch-as-drift-plans-to-expand-usdt-usage-on-solana/ "
   }
 ]
