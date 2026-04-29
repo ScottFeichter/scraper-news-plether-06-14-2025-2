@@ -1,16 +1,16 @@
 [
   {
+    "title": "Tether Develops New Bitcoin Mining Infrastructure with Modular Compute Systems to Control Energy, Cost, and Performance at Scale",
+    "content": "Tether, the largest company in the digital assets industry, is expanding its custom compute infrastructure with a new class of modular, high-density mining systems designed to improve efficiency and performance at scale. Instead of relying on fully assembled, off-the-shelf mining rigs, Tether is collaborating with Canaan Inc. (NASDAQ: CAN) and ACME […]",
+    "image_url": "https://tether.io/wp-content/uploads/2026/04/Canaan-1024x448.webp",
+    "date": "28 April 2026 –",
+    "url": "https://tether.io/news/tether-develops-new-bitcoin-mining-infrastructure-with-modular-compute-systems-to-control-energy-cost-and-performance-at-scale/ "
+  },
+  {
     "title": "Tether Launches MDK, an Open Infrastructure Layer for Bitcoin Mining",
     "content": "Tether, the largest company in the digital asset industry, today launched Mining Development Kit (MDK), an open-source, full-stack development framework that gives Bitcoin mining operators and developers unified control over their entire infrastructure stack.  With its open modular architecture and agnostic interfaces, MDK pairs a JavaScript backend SDK with a React […]",
     "image_url": "https://tether.io/wp-content/uploads/2026/04/Tether-MDK-1024x448.webp",
     "date": "27 April 2026 –",
     "url": "https://tether.io/news/tether-launches-mdk-an-open-infrastructure-layer-for-bitcoin-mining/ "
-  },
-  {
-    "title": "Tether Supports Freeze of More Than $344 Million in USD₮ in Coordination with OFAC and U.S. Law Enforcement",
-    "content": "Tether announced today that it has supported the U.S. Government in freezing $344 million USD₮ across two addresses. The freeze was executed after the addresses were identified, preventing further movement of funds. The freeze follows information shared with Tether by several U.S. authorities about activity tied to unlawful conduct. When wallets […]",
-    "image_url": "https://tether.io/wp-content/uploads/2024/06/image-281-1024x576.png",
-    "date": "23 April 2026 –",
-    "url": "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/ "
   }
 ]
